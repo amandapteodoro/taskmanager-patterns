@@ -1,0 +1,14 @@
+# Pastas de cache do Python
+__pycache__/
+*.pyc
+
+# Ambiente virtual (se vier a usar)
+venv/
+.env/
+.venv/
+
+# Configurações locais do VS Code
+.vscode/
+
+# Arquivos temporários
+*.log
