@@ -131,14 +131,6 @@ Aqui, utiliza-se a versão simples, adequada a um ambiente de execução sequenc
 
 # 5. Justificativas Detalhadas por Padrão
 
-Cada padrão será analisado conforme exigido:  
-1. Por que foi escolhido  
-2. Qual problema resolve  
-3. Quais benefícios traz  
-4. Como o código seria diferente sem o padrão  
-
----
-
 ## 5.1 Factory Method
 
 ### Por que o padrão foi escolhido
