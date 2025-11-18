@@ -15,7 +15,7 @@ A aplicação permite criar diferentes tipos de tarefas, armazená-las em um rep
 
 ### Execução
 1. Abra o terminal na pasta raiz do projeto.
-2. Execute: python src/main.py
+2. Execute: python -m src.main
 3. Utilize o menu exibido no terminal para:
 - Criar tarefas  
 - Executar todas as tarefas  
