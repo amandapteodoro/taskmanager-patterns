@@ -67,7 +67,7 @@ A seguir estão os quatro padrões implementados e a localização de suas class
 
 ---
 
-## 4. Objetivo Educacional
+## 4. Objetivo Geral
 
 Este projeto foi desenvolvido exclusivamente para fins acadêmicos, atendendo aos requisitos da atividade da disciplina **Padrões e Arquitetura de Software**, com foco em demonstrar o uso correto, organizado e contextualizado de cada padrão estudado.
 
