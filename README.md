@@ -2,9 +2,9 @@
 
 ## 1. Descrição do Projeto
 
-O TaskManager é uma aplicação simples em Python desenvolvida para demonstrar, de forma prática, a utilização de quatro padrões de projeto amplamente estudados: **Factory Method**, **Strategy**, **Observer** e **Singleton**.
+O **TaskManager** é uma aplicação em Python desenvolvida com foco didático para demonstrar, de forma prática e organizada, a aplicação de quatro padrões de projeto amplamente utilizados: **Factory Method**, **Strategy**, **Observer** e **Singleton**.
 
-A aplicação permite criar diferentes tipos de tarefas, armazená-las em um repositório único e executar cada tarefa conforme sua lógica específica. Durante a execução, eventos são registrados por um observador de logs.
+O programa permite criar diferentes tipos de tarefas, armazená-las em uma única estrutura global e executá-las conforme o comportamento específico de cada tipo. Além disso, toda vez que uma tarefa é executada, um observador registra automaticamente o evento, simulando um mecanismo simples de auditoria.
 
 ---
 
@@ -23,24 +23,30 @@ A aplicação permite criar diferentes tipos de tarefas, armazená-las em um rep
 
 ---
 
-## 3. Padrões de Projeto Implementados e Onde Encontrá-los
-
-A seguir estão os quatro padrões implementados e a localização de suas classes no código.
+## 3. Padrões de Projeto Implementados e onde estão localizados no programa
 
 ### 3.1 Factory Method
-**Responsável pela criação das tarefas conforme o tipo informado pelo usuário.**
+Responsável pela criação das tarefas conforme o tipo informado pelo usuário, evitando que o código principal conheça diretamente as classes concretas.
+A implementação segue o formato clássico: um Creator abstrato define o método de fábrica, enquanto Creators concretos criam os objetos específicos.
 
-- `src/tasks/task_factory.py`
+**Localização:**
+- **Creator abstrato:**
+  - `src/tasks/task_factory.py`
   
-- Classes concretas das tarefas:  
-  - `src/tasks/email_task.py`  
-  - `src/tasks/report_task.py`  
+- **Creators concretos:**  
+  - `src/tasks/creators/email_task_creator.py`
+  - `src/tasks/creators/report_task_creator.py`
+  - `src/tasks/creators/backup_task_creator.py`
+
+- **Produtos (tarefas criadas)**:
+  - `src/tasks/email_task.py`
+  - `src/tasks/report_task.py`
   - `src/tasks/backup_task.py`
 
 ### 3.2 Strategy
-**Define o comportamento de execução específico de cada tipo de tarefa.**
+O padrão Strategy define o comportamento de execução de cada tarefa. Cada tipo de tarefa possui sua própria estratégia, permitindo alterar o algoritmo de execução sem modificar o restante da classe.
 
-- Interface base:  
+- Interface:  
   - `src/strategy/execution_strategy.py`
   
 - Estratégias concretas:  
@@ -50,18 +56,19 @@ A seguir estão os quatro padrões implementados e a localização de suas class
   
 - Uso dentro das tarefas:  
   - `src/tasks/*.py`
+  - `src/tasks/task*.py`
 
 
 ### 3.3 Observer
-**Permite registrar automaticamente um log sempre que uma tarefa é executada.**
+Permite registrar automaticamente um log sempre que uma tarefa é executada, por meio de um observador de logs.
 
 - Interface: `src/observer/observer.py`  
 - Observador concreto: `src/observer/logger_observer.py`  
 - Notificação integrada à classe base de tarefa:  
-  - `src/tasks/task.py`
+  - `src/tasks/task.py` (métodos attach() e notify())
 
 ### 3.4 Singleton
-**Garante que todas as tarefas criadas sejam armazenadas em uma única instância global.**
+Garante que todas as tarefas criadas sejam armazenadas em uma única instância global.
 
 - Implementação: `src/storage/storage_singleton.py`
 
@@ -69,7 +76,7 @@ A seguir estão os quatro padrões implementados e a localização de suas class
 
 ## 4. Objetivo Geral
 
-Este projeto foi desenvolvido exclusivamente para fins acadêmicos, atendendo aos requisitos da atividade da disciplina **Padrões e Arquitetura de Software**, com foco em demonstrar o uso correto, organizado e contextualizado de cada padrão estudado.
+Este projeto foi desenvolvido exclusivamente para fins acadêmicos, atendendo aos requisitos da atividade da disciplina **Padrões e Arquitetura de Software**. O objetivo principal é demonstrar, de forma clara e contextualizada, como diferentes padrões de projeto podem ser aplicados em conjunto dentro de uma aplicação Python real, ainda que simplificada, promovendo modularidade, flexibilidade e facilidade de manutenção.
 
 
 

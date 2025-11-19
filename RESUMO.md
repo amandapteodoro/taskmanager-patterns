@@ -1,131 +1,170 @@
 # Resumo Técnico – Estudo e Aplicação de Padrões de Projeto
 
-Este documento apresenta um estudo aprofundado e uma análise detalhada dos padrões de projeto utilizados no desenvolvimento da aplicação TaskManager.  
-O objetivo é demonstrar domínio teórico dos padrões, suas variações, comparações e justificar tecnicamente a aplicação de cada padrão no contexto da atividade.
+Este documento apresenta um estudo técnico sobre os padrões de projeto utilizados na construção da aplicação **TaskManager**, detalhando suas bases teóricas, variações, justificativas e a forma como foram aplicados na prática. O objetivo é demonstrar não apenas a compreensão conceitual dos padrões, mas também como eles solucionam problemas reais de organização, extensibilidade e desacoplamento dentro do sistema.
+
+---
 
 # 0. Introdução da Aplicação
-O sistema TaskManager simula um gerenciador simples de tarefas, no qual o usuário pode criar diferentes tipos de ações (como enviar e-mails, gerar relatórios ou executar backups), armazená-las em um repositório e executá-las de forma centralizada. Para garantir uma arquitetura organizada, flexível e extensível, o sistema aplica quatro padrões de projeto complementares: o Factory Method, que decide qual classe concreta de tarefa criar conforme o tipo informado; o Strategy, que define o comportamento específico de execução de cada tarefa; o Observer, que captura e registra eventos sempre que uma tarefa é executada; e o Singleton, que garante que todas as tarefas sejam armazenadas em uma única estrutura compartilhada durante a execução do programa.
 
-O fluxo do sistema ocorre sempre na mesma sequência lógica: o usuário escolhe um tipo de tarefa -> o Factory Method cria a instância correta -> a tarefa recebe sua estratégia de execução via Strategy -> a tarefa é armazenada em um repositório único controlado pelo Singleton -> quando executada, a lógica específica definida pela estratégia é aplicada -> após a execução, a tarefa notifica automaticamente os observadores cadastrados por meio do Observer, registrando logs e permitindo novas integrações. Essa combinação de padrões organiza o sistema em camadas independentes, reduz o acoplamento e torna fácil adicionar novos tipos de tarefas ou comportamentos sem alterar o código existente.
+O **TaskManager** é um sistema simples de gerenciamento de tarefas que permite ao usuário criar diferentes ações — como enviar e-mails, gerar relatórios ou executar backups —, armazená-las em um repositório global e executá-las de forma centralizada. Para manter o código modular e sustentável, o sistema aplica quatro padrões de projeto que trabalham em conjunto:
+
+- **Factory Method:** Escolhe automaticamente qual tipo de tarefa deve ser criada, delegando às subclasses o processo de instanciação.
+- **Strategy:** Define o comportamento específico de execução de cada tarefa, mantendo o algoritmo isolado da classe principal.
+- **Observer:** Notifica automaticamente observadores sempre que uma tarefa é executada, registrando logs e permitindo reações independentes.
+- **Singleton:** Mantém uma única instância global responsável por armazenar todas as tarefas criadas.
+
+O fluxo geral do TaskManager segue uma cadeia lógica clara:
+
+1. O usuário escolhe o tipo de tarefa.  
+2. O **Factory Method** aciona o *creator* correto, que retorna a classe concreta da tarefa.  
+3. A tarefa criada recebe internamente sua **Strategy** de execução.  
+4. A tarefa é registrada na estrutura única controlada pelo **Singleton**.  
+5. Ao ser executada, a estratégia define o comportamento da tarefa.  
+6. Após a execução, a tarefa dispara notificações via **Observer**, permitindo o registro automático de logs.
+
+Essa combinação garante organização, baixo acoplamento, facilidade de extensão e permite adicionar novos tipos de tarefas ou comportamentos sem alterar o código existente.
+
+---
 
 # 1. Estudo Teórico dos Padrões de Projeto
 
-Os padrões implementados pertencem às categorias **criacionais** e **comportamentais**, amplamente documentados pela plataforma Refactoring.Guru, utilizada como base conceitual.
+Os padrões utilizados pertencem às categorias **criacionais** e **comportamentais**, conforme documentado pelo Refactoring.Guru — que serviu de base conceitual para o desenvolvimento deste trabalho.
 
-Os padrões estudados e aplicados foram:
+Padrões estudados e aplicados:
 
 - **Factory Method** (Criacional)  
 - **Strategy** (Comportamental)  
 - **Observer** (Comportamental)  
 - **Singleton** (Criacional)  
 
+---
+
 # 2. Descrição dos Padrões Estudados
 
 ## 2.1 Factory Method
 
 **Propósito:**  
-Fornecer uma interface comum para criação de objetos, delegando às subclasses a decisão sobre qual classe concreta deve ser instanciada.
+Fornecer uma interface abstrata para criar objetos, permitindo que subclasses decidam qual classe concreta deve ser instanciada.
 
-**Estrutura básica:**  
-- Uma classe criadora define o método fábrica (factory method).  
-- As subclasses sobrescrevem esse método para retornar diferentes produtos concretos.  
+**Estrutura:**  
+- Um *Creator* abstrato que define o método de fábrica.  
+- Subclasses concretas que sobrescrevem o factory method para retornar produtos específicos.  
 
-**Quando utilizá-lo:**  
-- Quando o código não deve depender de classes concretas.  
-- Quando é necessário permitir extensibilidade para criação de novos objetos.  
-- Quando deseja-se evitar condicionais espalhadas pelo sistema.
+**Uso ideal:**  
+- Quando o sistema não deve depender de classes concretas.  
+- Quando a criação de novos produtos precisa ser estendida sem modificar o código principal.  
+- Quando se deseja eliminar blocos extensos de condicionais para instanciar objetos.
+
+---
 
 ## 2.2 Strategy
 
 **Propósito:**  
-Encapsular algoritmos ou comportamentos intercambiáveis dentro de classes separadas, permitindo substituição em tempo de execução.
+Encapsular algoritmos intercambiáveis e permitir que o objeto principal delegue comportamentos específicos a classes separadas.
 
-**Estrutura básica:**  
-- Uma interface de estratégia define o comportamento.  
-- Múltiplas implementações concretas encapsulam algoritmos alternativos.  
-- O objeto principal delega o comportamento para a estratégia escolhida.
+**Estrutura:**  
+- Uma interface base para a estratégia.  
+- Implementações concretas que encapsulam diferentes algoritmos.  
+- A classe principal delega o comportamento à estratégia definida.
 
-**Quando utilizá-lo:**  
-- Quando um objeto precisa executar comportamentos distintos dependendo do contexto.  
-- Quando regras de negócio variam entre objetos semelhantes.  
-- Quando se deseja evitar condicionais extensas e repetitivas.
+**Uso ideal:**  
+- Quando um objeto precisa executar diferentes lógicas dependendo do contexto.  
+- Quando se deseja manter regras de negócio bem organizadas e independentes.  
+- Quando condicionais repetitivas devem ser eliminadas.
+
+---
 
 ## 2.3 Observer
 
 **Propósito:**  
-Criar uma relação de dependência um-para-muitos, de forma que uma mudança no objeto observado notifique automaticamente todos os observadores cadastrados.
+Criar uma dependência um-para-muitos entre objetos, de modo que mudanças no sujeito (Subject) gerem notificações automáticas para todos os observadores.
 
-**Estrutura básica:**  
-- Um sujeito (Subject) mantém uma lista de observadores.  
-- Observadores implementam uma interface comum para receber notificações.  
-- Quando ocorre um evento, o sujeito dispara atualizações.
+**Estrutura:**  
+- Um objeto observado (Subject) com lista de observadores.  
+- Observadores que implementam uma interface comum.  
+- Notificação automática disparada após um evento relevante.
 
-**Quando utilizá-lo:**  
-- Quando diversas partes do sistema precisam reagir a eventos específicos.  
-- Quando se deseja desacoplar produtor e consumidores de eventos.
+**Uso ideal:**  
+- Quando múltiplas partes do sistema precisam agir após um evento.  
+- Quando se deseja evitar chamadas diretas e dependências rígidas entre objetos.
+
+---
 
 ## 2.4 Singleton
 
 **Propósito:**  
-Garantir que apenas uma instância de uma classe exista durante toda a execução do programa, e que haja um ponto global de acesso a ela.
+Garantir que apenas uma instância de uma classe exista e fornecer um ponto global de acesso a ela.
 
-**Estrutura básica:**  
-- Construtor privado ou controlado.  
-- Método estático que retorna sempre a mesma instância.  
+**Estrutura:**  
+- Construtor controlado.  
+- Instância única armazenada e reutilizada.  
 
-**Quando utilizá-lo:**  
-- Quando há recursos compartilhados (configurações, cache, armazenamento).  
-- Quando duplicação de instâncias causaria inconsistência.
+**Uso ideal:**  
+- Quando existe um recurso central compartilhado.  
+- Quando múltiplas instâncias causariam inconsistências (como listas de tarefas, caches ou configurações).
+
+---
 
 # 3. Iterações e Variações dos Padrões
 
 ## 3.1 Factory Method
-Variações incluem:
-- Fábricas abstratas para grupos de objetos relacionados.  
-- Instanciação dinâmica via dicionários ou registradores.
-- Fábricas parametrizadas por configuração externa.
+Variações comuns:
+- Fábricas abstratas para grupos de produtos.  
+- Registro dinâmico de criadores.  
+- Seleção baseada em metadados externos.
 
-No projeto, optou-se pela forma mais tradicional, baseada em seleção por tipo, garantindo clareza para fins didáticos.
+No TaskManager, adotou-se a versão clássica: cada criador concreto instancia um tipo específico de tarefa, garantindo clareza e fácil expansão.
+
+---
 
 ## 3.2 Strategy
-Possui variações como:
-- Estratégias compostas.  
-- Estratégias selecionadas dinamicamente por contexto.  
-- Cadeias de estratégias (Chain of Responsibility combinada com Strategy).
+Variações:
+- Estratégias encadeadas.  
+- Seleção dinâmica em tempo de execução.  
+- Composição de múltiplas estratégias.
 
-No projeto, utiliza-se a variação "Strategy fixa por tipo", onde cada tarefa recebe sua estratégia ao ser criada.
+Aqui, cada tarefa já recebe sua estratégia no momento da criação — simples e didático.
+
+---
 
 ## 3.3 Observer
-Variações comuns:
+Variações:
 - Notificação assíncrona.  
-- Observadores remotos (event sourcing).  
-- Observadores configuráveis em tempo de execução.
+- Observadores remotos.  
+- Filtragem de eventos.
 
-O projeto utiliza a forma clássica síncrona, onde cada evento aciona imediatamente os observadores registrados.
+A aplicação usa a versão síncrona tradicional, onde o log é impresso no console assim que a tarefa é executada.
+
+---
 
 ## 3.4 Singleton
-Variações incluem:
+Variações:
 - Singleton preguiçoso (lazy).  
 - Singleton thread-safe.  
-- Singleton com injeção de dependência (via contêiner).
+- Injeção de dependência com container.
 
-Aqui, utiliza-se a versão simples, adequada a um ambiente de execução sequencial.
+No TaskManager, utiliza-se uma forma simples, adequada ao propósito acadêmico.
 
-# 4. Comparações Entre os Padrões Utilizados
+---
 
-### Factory Method vs Strategy  
-- Ambos promovem extensibilidade.  
-- Factory cria objetos; Strategy define comportamentos.  
-- Juntos, permitem criar objetos já configurados com comportamentos específicos.
 
-### Observer vs Strategy  
-- Strategy encapsula “como executar”.  
-- Observer encapsula “como reagir ao que foi executado”.  
-- Um complementa o outro, pois o Observer não interfere na lógica principal.
+# 4. Comparação Geral Entre os Padrões
 
-### Singleton vs os demais  
-- Singleton não define comportamentos, mas garante um ponto de acesso central.  
-- Trabalha como suporte arquitetural para os padrões comportamentais.
+Embora atuem em áreas diferentes da arquitetura, os quatro padrões utilizados se complementam e contribuem para um sistema mais organizado e extensível.
+
+- **Factory Method** resolve o problema de criação de objetos, permitindo que novos tipos de tarefas sejam adicionados sem alterar o fluxo principal da aplicação.  
+- **Strategy** atua sobre o comportamento, garantindo que cada tarefa execute sua lógica própria de forma isolada e intercambiável.  
+- **Observer** trata da reação a eventos, permitindo que o sistema acompanhe execuções sem acoplar tarefas a rotinas de monitoramento.  
+- **Singleton** centraliza o armazenamento das tarefas, garantindo consistência e acesso global.
+
+No conjunto, esses padrões demonstram como soluções arquiteturais diferentes podem trabalhar juntas:
+
+- Um padrão controla **como os objetos são criados** (Factory Method).  
+- Outro controla **como eles se comportam** (Strategy).  
+- Outro controla **como eles se comunicam** (Observer).  
+- E outro controla **como são armazenados** (Singleton).
+
+O uso conjunto dos padrões reforça a importância de separar responsabilidades, reduzir acoplamento e promover extensibilidade, princípios essenciais de arquitetura de software.
 
 ---
 
@@ -133,78 +172,112 @@ Aqui, utiliza-se a versão simples, adequada a um ambiente de execução sequenc
 
 ## 5.1 Factory Method
 
-### Por que o padrão foi escolhido
-O projeto exige criação de diferentes tipos de tarefas sem alterar o código principal sempre que um novo tipo for adicionado.
+### Por que foi escolhido
+Para evitar condicionais no `main.py` e permitir criar novos tipos de tarefas sem alterar o fluxo da aplicação.
 
-### Qual problema ele resolve
-Evita condicionais espalhadas pelo código e elimina dependências diretas de classes concretas dentro do fluxo principal.
+### Problema resolvido
+Remove dependências diretas de classes concretas e evita código rígido.
 
 ### Benefícios trazidos
-- Extensibilidade facilitada.  
-- Redução de acoplamento.  
-- Centralização da lógica de criação.
+- Extensibilidade  
+- Centralização da lógica de criação  
+- Desacoplamento do fluxo principal  
 
-### Como o código seria diferente sem o padrão
-O `main.py` precisaria conter vários `if/elif` instanciando diretamente as classes concretas, tornando o código rígido e difícil de manter.
+### Como seria sem o padrão
+O `main.py` teria vários `if/elif` instanciando diretamente as classes `EmailTask`, `ReportTask`, etc., tornando o código inflexível.
+
+### Uso no código
+- Creator abstrato:  
+  `src/tasks/creators/task_creator.py`
+- Creators concretos:  
+  `src/tasks/creators/email_task_creator.py`  
+  `src/tasks/creators/report_task_creator.py`  
+  `src/tasks/creators/backup_task_creator.py`
+- Invocação no fluxo:  
+  `main.py` usando `get_creator()` para decidir qual Creator instanciar.
 
 ---
 
 ## 5.2 Strategy
 
-### Por que o padrão foi escolhido
-Cada tipo de tarefa possui uma lógica distinta de execução.
+### Por que foi escolhido
+Cada tipo de tarefa possui uma lógica de execução completamente distinta.
 
-### Qual problema ele resolve
-Evita que a classe base de tarefa tenha que conhecer todos os comportamentos possíveis, prevenindo código inchado e pouco flexível.
+### Problema resolvido
+Evita que a classe `Task` tenha que conhecer todos os comportamentos possíveis.
 
 ### Benefícios trazidos
-- Organização modular das regras de negócio.  
-- Possibilidade de adicionar novos comportamentos sem alterar tarefas existentes.  
-- Remoção completa de condicionais desnecessários.
+- Modularidade  
+- Maior legibilidade  
+- Fácil adição de novos comportamentos  
 
-### Como o código seria diferente sem o padrão
-Haveria condicionais dentro da classe `Task` verificando o tipo da tarefa, violando o princípio aberto/fechado e resultando em baixa manutenibilidade.
+### Como seria sem o padrão
+A classe `Task` teria condicionais como:  
+“se tipo == email: executa email…”, violando princípios de manutenção.
+
+### Uso no código
+- Interface da estratégia:  
+  `src/strategy/execution_strategy.py`
+- Implementações concretas:  
+  `src/strategy/email_strategy.py`  
+  `src/strategy/report_strategy.py`  
+  `src/strategy/backup_strategy.py`
+- Uso dentro das tarefas:  
+  `src/tasks/task.py` delegando `self.strategy.run()`.
 
 ---
 
 ## 5.3 Observer
 
-### Por que o padrão foi escolhido
-O sistema precisa registrar logs automáticos sempre que uma tarefa é executada.
+### Por que foi escolhido
+O sistema precisa registrar logs e permitir reações automáticas após a execução de tarefas.
 
-### Qual problema ele resolve
-Permite adicionar novas formas de reação a eventos sem alterar o código da tarefa.
+### Problema resolvido
+Permite adicionar novas formas de resposta a eventos sem alterar o código das tarefas.
 
 ### Benefícios trazidos
-- Total desacoplamento entre execução e monitoramento.  
-- Possibilidade de múltiplos observadores.  
-- Aumento da rastreabilidade.
+- Desacoplamento entre execução e monitoramento  
+- Possibilidade de múltiplos observadores  
+- Centralização lógica das notificações  
 
-### Como o código seria diferente sem o padrão
-A classe `Task` teria que chamar diretamente uma função de log, criando dependência rígida e impossibilitando múltiplas reações ao mesmo evento.
+### Como seria sem o padrão
+Cada tarefa teria código manual de logging ou notificações, tornando difícil adicionar novas reações.
+
+### Uso no código
+- Interface do observador:  
+  `src/observer/observer.py`
+- Observador concreto:  
+  `src/observer/logger_observer.py`
+- Implementação no Subject:  
+  `src/tasks/task.py` (métodos `attach()` e `notify()`)
 
 ---
 
 ## 5.4 Singleton
 
-### Por que o padrão foi escolhido
-Era necessário manter uma lista única e global de tarefas acessível ao longo da execução.
+### Por que foi escolhido
+O sistema depende de um repositório único de tarefas compartilhado do início ao fim da execução.
 
-### Qual problema ele resolve
-Garante que o armazenamento das tarefas não seja duplicado ou perdido em diferentes instâncias da aplicação.
+### Problema resolvido
+Evita múltiplas listas de tarefas desconexas ou inconsistentes.
 
 ### Benefícios trazidos
-- Consistência dos dados.  
-- Facilidade de acesso ao repositório global.  
-- Simplicidade da arquitetura.
+- Consistência dos dados  
+- Facilidade de acesso global  
+- Simplicidade arquitetural  
 
-### Como o código seria diferente sem o padrão
-Cada parte da aplicação precisaria carregar sua própria lista de tarefas ou repassar listas via parâmetros, causando duplicação e desorganização.
+### Como seria sem o padrão
+Cada parte do sistema teria de gerenciar sua própria lista ou repassar listas manualmente.
+
+### Uso no código
+- Implementação do Singleton:  
+  `src/storage/storage_singleton.py`
+- Usado no fluxo principal:  
+  `storage = StorageSingleton()` retorna sempre a mesma instância.
 
 ---
 
 # 6. Conclusão
 
-O estudo e aplicação dos padrões demonstraram sua importância na construção de sistemas modulares, coesos e sustentáveis.  
-O conjunto dos padrões utilizados oferece clareza arquitetural e demonstra, na prática, como soluções consagradas da Engenharia de Software resolvem problemas recorrentes de forma elegante e estruturada.
-
+A aplicação do conjunto de padrões no TaskManager demonstra como diferentes abordagens de criação, comportamento, comunicação e armazenamento podem cooperar de forma harmônica.  
+O sistema resultante é modular, de fácil manutenção e pronto para ser expandido, fornecendo uma base sólida para compreender como padrões clássicos podem ser integrados na prática para resolver problemas recorrentes.
