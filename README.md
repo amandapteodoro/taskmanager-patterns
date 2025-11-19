@@ -21,6 +21,8 @@ A aplicação permite criar diferentes tipos de tarefas, armazená-las em um rep
 - Executar todas as tarefas  
 - Listar tarefas registradas  
 
+---
+
 ## 3. Padrões de Projeto Implementados e Onde Encontrá-los
 
 A seguir estão os quatro padrões implementados e a localização de suas classes no código.
@@ -28,7 +30,8 @@ A seguir estão os quatro padrões implementados e a localização de suas class
 ### 3.1 Factory Method
 **Responsável pela criação das tarefas conforme o tipo informado pelo usuário.**
 
-- `src/tasks/task_factory.py`  
+- `src/tasks/task_factory.py`
+  
 - Classes concretas das tarefas:  
   - `src/tasks/email_task.py`  
   - `src/tasks/report_task.py`  
@@ -39,10 +42,12 @@ A seguir estão os quatro padrões implementados e a localização de suas class
 
 - Interface base:  
   - `src/strategy/execution_strategy.py`
+  
 - Estratégias concretas:  
   - `src/strategy/email_strategy.py`  
   - `src/strategy/report_strategy.py`  
   - `src/strategy/backup_strategy.py`
+  
 - Uso dentro das tarefas:  
   - `src/tasks/*.py`
 
@@ -59,6 +64,8 @@ A seguir estão os quatro padrões implementados e a localização de suas class
 **Garante que todas as tarefas criadas sejam armazenadas em uma única instância global.**
 
 - Implementação: `src/storage/storage_singleton.py`
+
+---
 
 ## 4. Objetivo Educacional
 
